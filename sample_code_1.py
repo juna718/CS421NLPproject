@@ -1,6 +1,31 @@
 import re
 import string
 from spellchecker import SpellChecker
+import pandas as pd
+import os
+
+def calculate_average_length():
+    essays = {}
+    directory = "essays"
+    indexes_df = pd.read_csv('index.csv', delimiter=';')
+    indexes_df['length'] = 0
+    # Loop through each file in the directory
+    for filename in os.listdir(directory):
+        if filename.endswith(".txt"):
+            file_path = os.path.join(directory, filename)
+            try:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    essays[filename] = file.read()
+                    # Count the sentences and update the DataFrame
+                    indexes_df.loc[indexes_df['filename'] == filename, 'length'] = count_sentences(essays[filename])
+            except Exception as e:
+                print(f"Error reading file {filename}: {e}")
+    # Calculate the average length for grade 'low'
+    average_length_low = indexes_df[indexes_df['grade'] == 'low']['length'].mean()
+
+    # Calculate the average length for grade 'high'
+    average_length_high = indexes_df[indexes_df['grade'] == 'high']['length'].mean()
+    return average_length_low, average_length_high
 
 def count_sentences(text):
     """
@@ -10,19 +35,22 @@ def count_sentences(text):
     sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[.?])\s', text)
     return len(sentences)
 
-def compute_sentence_score(num_sentences):
-    """
-    Compute the sentence score based on the number of sentences.
-    """
-    if num_sentences >= 10:
-        return 5  # High score for essays with 10 or more sentences
+
+def compute_sentence_score(length, average_length_high, average_length_low):
+    midpoint = (average_length_high + average_length_low) / 2
+    
+    # Assign numeric scores based on the length of the essay
+    if length >= average_length_high:
+        return 5
+    elif length >= midpoint:
+        return 4
+    elif length >= average_length_low:
+        return 3
+    elif length >= average_length_low / 2:
+        return 2
     else:
-        return 1  # Low score for essays with fewer than 10 sentences
-
-
-import string
-from spellchecker import SpellChecker
-
+        return 1
+    
 def remove_punctuation(text):
     """
     Remove all punctuation characters from a given text.

@@ -6,6 +6,9 @@ Teammate 2 NAME: Junha Liu - jliu238@uic.edu
 Project files & functions:
 
 - sample_code_1.py:
+
+  - calculate_average_length function calculates the average sentence length from a corpus of texts.
+  
   - count_sentences function calculates scoring criterion a (number of sentences and lengths)
   
   - compute_sentence_score function calculates scoring criterion a (sentence score)
@@ -16,9 +19,11 @@ Project files & functions:
 
   - spelling_mistakes_to_score function converts the count of unique spelling mistakes identified by the spelling_mistakes function into a numeric score. The scoring system is tiered, with a range from 0 (excessive mistakes) to 4 (no mistakes), allowing for a quantifiable measure of spelling accuracy in the essay.
   
+  - Calculates the average sentence length from a corpus of texts.
+  
 - sample_code_2.py:
 
-  - detect_agreement_errors function checks for subject-verb agreement errors within the text. 
+  - subject_verb_agreement_errors function identifies sentences with subject-verb agreement errors.
   
   - verb_tense_errors function identifies sentences that mix past tense and non-past tense verbs, which can indicate tense inconsistency errors. It tokenizes the essay into sentences, tags each word with its part of speech, and counts the types of verb tenses. Sentences containing both past and non-past tense verbs are marked as error.
 
