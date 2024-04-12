@@ -11,6 +11,7 @@ The system counts the number of sentences in an essay using regular expressions.
 
 Scoring:
 
+Scoring for sentence structure is based on the number of sentences present in the essay. Longer essays with more sentences generally receive higher scores.
 
 Spelling Mistakes and Scoring
 
@@ -30,6 +31,7 @@ Subject-verb agreement errors are detected using the SpaCy library, which proces
 
 Scoring:
 
+Scoring for subject-verb agreement errors is based on the number of errors detected. Essays with fewer agreement errors receive higher scores.
 
 2. Verb Tense Error
 
