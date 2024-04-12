@@ -1,0 +1,52 @@
+Report on Automated Essay Scoring Components
+
+Introduction
+
+This report outlines the methodology and scoring components of an automated essay scoring system. The system evaluates essays based on three primary aspects: sentence structure, spelling, and grammar correctness, particularly verb-related errors. The algorithms implemented in Python aim to provide quantitative scores that reflect various qualities of essay writing.
+
+Sentence Counting and Scoring
+
+Methodology:
+The system counts the number of sentences in an essay using regular expressions. This method splits the text based on patterns that typically denote the end of sentences, such as periods, question marks, or exclamation points, ensuring that abbreviations do not mistakenly increase the sentence count.
+
+Scoring:
+
+
+Spelling Mistakes and Scoring
+
+Methodology:
+Spelling is checked using the `SpellChecker` library, which compares each word against a dictionary of correctly spelled words. The system identifies words that do not match any entries in the dictionary as misspellings.
+
+Scoring:
+The score for spelling is calculated based on the total number of spelling mistakes. Fewer spelling errors result in higher scores.
+
+Grammar Correctness: Verb Errors
+
+1. Subject-Verb Agreement Error
+
+Methodology:
+
+Subject-verb agreement errors are detected using the SpaCy library, which processes the essay with its English language model. Each token in the text is examined to see if it is a noun serving as a subject (nsubj). The verb that the subject noun depends on (its head) is then checked. If this verb is not in the third person singular present tense (VBZ) when it should be, an error is recorded. This check helps identify inconsistencies between the subject and verb forms, which are crucial for grammatical accuracy.
+
+Scoring:
+
+
+2. Verb Tense Error
+
+Methodology:
+
+Verb tense errors are identified using the NLTK library, which tokenizes the text into sentences and then into words, tagging each word with its part of speech. The function looks for sentences that mix past tense verbs (VBD, VBN) with non-past tense verbs (VB, VBG, VBP, VBZ). This mixing of tenses within a single sentence can indicate poor temporal consistency and confusion in narrative time, which is often considered a grammatical error.
+
+Scoring:
+
+Scoring for verb tense errors is based on the presence of sentences with mixed verb tenses. Fewer instances of tense mixing result in higher scores, indicating a stronger consistency in verb tense usage throughout the essay.
+
+3. Missing/Extra Verb Error
+
+Methodology:
+
+This error type is checked using NLTK’s capabilities to tokenize and POS-tag each sentence. The analysis involves counting the actual number of verbs in each sentence and estimating the expected number based on the presence of certain conjunctions, prepositions, and other linking words. Sentences are flagged as erroneous if they contain fewer verbs than expected (missing verbs) or more verbs than typical structures require (extra verbs), considering complex clauses and sentence constructions.
+
+Scoring:
+
+The scoring for missing or extra verb errors is directly tied to the number of such errors detected. Essays with correct verb placement and counts score higher.

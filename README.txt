@@ -1,5 +1,35 @@
-There are 100 essays contained in this folder. Each essay is answering one of six possible questions (prompts). Each essay is graded "low" if the essay was poorly written (50 such essays), or "high" if the essay was well written (50 such essays).
+Essay Evaluation System
 
-Contents:
-1. "essays" contains 100 essays, each in its own text file.
-2. "index.csv" maps each of the 100 essays from the "essays" folder to its corresponding prompt and grade it received.
+Description
+
+The Essay Evaluation System automates the assessment of essays by analyzing sentence structure, spelling, and grammatical accuracy, including verb agreements. This system provides a comprehensive score based on various linguistic metrics.
+
+Installation
+
+1. Clone or Download the Repository
+
+   - To get started, clone this repository to your local machine or download the ZIP and extract it.
+
+2. Install Required Packages
+
+   - Install the necessary Python packages using pip:
+   
+     pip install nltk spacy pyspellchecker
+
+Usage
+
+   - To run the system, use the following command in the terminal:
+
+    python run_project.py <filename>
+    
+    Replace `<filename>` with the name of the essay file you want to evaluate. Ensure the file is located in the `essays` directory.
+
+Example
+
+To process an essay named `example_essay.txt`, 
+
+    python run_project.py example_essay.txt
+
+Support
+
+https://github.com/juna718/CS421NLPproject
