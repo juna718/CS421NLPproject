@@ -6,9 +6,9 @@ Teammate 2 NAME: Junha Liu - jliu238@uic.edu
 Project files & functions:
 
 - sample_code_1.py:
-  - count_sentences function calculates the number of sentences in the given text.
-
-  - compute_sentence_score function computes the sentence score based on the number of sentences.
+  - count_sentences function calculates scoring criterion a (number of sentences and lengths)
+  
+  - compute_sentence_score function calculates scoring criterion a (sentence score)
 
   - remove_punctuation function removes all punctuation from the provided text. 
 
