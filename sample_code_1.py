@@ -14,9 +14,10 @@ def compute_sentence_score(num_sentences):
     """
     Compute the sentence score based on the number of sentences.
     """
-    # Placeholder implementation for sentence scoring
-    # Your implementation can compute the score based on the number of sentences
-    pass
+    if num_sentences >= 10:
+        return 5  # High score for essays with 10 or more sentences
+    else:
+        return 1  # Low score for essays with fewer than 10 sentences
 
 
 import string
