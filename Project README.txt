@@ -1,41 +1,49 @@
 # CS421NLPproject
 
-Teammate 1 NAME: Hamza Mansoor - smans4@uic.edu
-Teammate 2 NAME: Junha Liu - jliu238@uic.edu
+## Team Information
+- **Teammate 1 NAME**: Hamza Mansoor - smans4@uic.edu
+- **Teammate 2 NAME**: Junha Liu - jliu238@uic.edu
 
-Project files & functions:
+## Project Files & Functions
 
-- sample_code_1.py:
+### sample_code_1.py:
+- `calculate_average_length`: Calculates the average sentence length from a corpus of texts
 
-  - calculate_average_length function calculates the average sentence length from a corpus of texts.
-  
-  - count_sentences function calculates scoring criterion a (number of sentences and lengths)
-  
-  - compute_sentence_score function calculates scoring criterion a (sentence score)
+- `count_sentences`: Calculates scoring criterion a (number of sentences and lengths).
 
-  - remove_punctuation function removes all punctuation from the provided text. 
+- `compute_sentence_score`: Calculates scoring criterion a (sentence score).
 
-  - spelling_mistakes function identifies spelling mistakes within an essay. 
+- `remove_punctuation`: Removes all punctuation from the provided text.
 
-  - spelling_mistakes_to_score function converts the count of unique spelling mistakes identified by the spelling_mistakes function into a numeric score. The scoring system is tiered, with a range from 0 (excessive mistakes) to 4 (no mistakes), allowing for a quantifiable measure of spelling accuracy in the essay.
-  
-  - Calculates the average sentence length from a corpus of texts.
-  
-- sample_code_2.py:
+- `spelling_mistakes`: Identifies spelling mistakes within an essay.
 
-  - subject_verb_agreement_errors function identifies sentences with subject-verb agreement errors.
-  
-  - verb_tense_errors function identifies sentences that mix past tense and non-past tense verbs, which can indicate tense inconsistency errors. It tokenizes the essay into sentences, tags each word with its part of speech, and counts the types of verb tenses. Sentences containing both past and non-past tense verbs are marked as error.
+- `spelling_mistakes_to_score`: Converts the count of unique spelling mistakes identified by the `spelling_mistakes` function into a numeric score. The scoring system is tiered, with a range from 0 (excessive mistakes) to 4 (no mistakes), providing a quantifiable measure of spelling accuracy in the essay.
 
-  - missing_verb_extra_verb_errors function detects sentences with either missing verbs or an excessive number of verbs. It assesses the expected number of verbs based on the presence of conjunctions, prepositions, and other linking parts of speech, comparing it to the actual count of verbs in the sentence. Sentences that don't meet the expected verb count are considered to have errors.
+### sample_code_2.py:
+- `string_to_vec`: Converts a sentence into an average word vector, focusing on content words with vectors.
 
-  - total_verb_errors function aggregates verb-related errors from the verb_tense_errors and missing_verb_extra_verb_errors functions into a set of unique error-containing sentences. 
+- `cosine_similarity`: Computes the cosine similarity between two vectors, used in determining essay coherence and topic relevance.
 
-  - verb_errors_to_score function quantifies the severity of verb-related errors by converting the count of unique error-containing sentences into a numeric score. The scoring system ranges from 1 (excessive mistakes) to 5 (no mistakes), allowing for a measurable assessment of verb usage and grammatical accuracy in the essay.
-  
-- run_project.py
+- `essay_address_topic` (Part d.i): Computes how well the essay addresses the prompt using cosine similarity between the prompt's topic vector and the essay's average sentence vector.
 
-Packages used:
-- SpaCY
-- Numpy
-- spellchecker
+- `essay_coherence` (Part d.ii): Analyzes the coherence of the essay by examining cosine similarities between consecutive sentences, reflecting on the essay's internal logical flow.
+
+- `analyze_essay_coherence_and_topic`: Integrates analyses for both topic relevance (d.i) and coherence (d.ii) of an essay.
+
+- `subject_verb_agreement_errors`: Identifies sentences with subject-verb agreement errors.
+
+- `verb_tense_errors`: Identifies sentences that mix past and non-past tense verbs, highlighting tense inconsistency errors.
+
+- `missing_verb_extra_verb_errors`: Detects sentences with either missing verbs or an excessive number of verbs, assessing grammatical accuracy.
+
+- `total_verb_errors`: Aggregates verb-related errors into a set of unique error-containing sentences.
+
+- `verb_errors_to_score`: Quantifies the severity of verb-related errors into a numeric score, ranging from 1 (excessive mistakes) to 5 (no mistakes).
+
+### run_project.py
+- This script is the main entry point for processing essays. It uses functions from `sample_code_1.py` and `sample_code_2.py` to perform a comprehensive analysis of essays, including counting sentences, detecting spelling mistakes, analyzing verb errors, and assessing both topic relevance and coherence.
+
+## Packages Used:
+- **SpaCy**: Utilized for NLP tasks, particularly for tokenization and word vector computations.
+- **NumPy**: Used for numerical operations, especially in vector calculations and statistics.
+- **spellchecker**: Employed to identify and score spelling mistakes within the essays.
