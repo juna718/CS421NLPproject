@@ -1,11 +1,58 @@
 import spacy
+import numpy as np
+from scipy.spatial.distance import cosine
 from nltk import pos_tag, word_tokenize, sent_tokenize
 import nltk
+
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
-# Load English language model
-nlp = spacy.load("en_core_web_sm")
+# Load English language model from SpaCy with word vectors
+nlp = spacy.load("en_core_web_md")
+
+def string_to_vec(sentence):
+    """
+    Converts a sentence into an average word vector, excluding stop words and focusing only on tokens with vectors.
+    """
+    doc = nlp(sentence)
+    vectors = [token.vector for token in doc if not token.is_stop and token.has_vector]
+    return np.mean(vectors, axis=0) if vectors else np.zeros((300,))  # Assuming 300 dimensions
+
+def cosine_similarity(vec1, vec2):
+    """
+    Compute the cosine similarity between two vectors, handling cases where vectors might be zero.
+    """
+    if np.all(vec1 == 0) or np.all(vec2 == 0):
+        return 0  # Handle cases where vector might be zero
+    return 1 - cosine(vec1, vec2)
+
+def essay_address_topic(essay, prompt):
+    """
+    Computes how well the essay addresses the prompt using cosine similarity (part d.i).
+    This is determined between the prompt's topic vector and the average vector of the essay's sentences.
+    """
+    topic_vector = string_to_vec(prompt)
+    essay_sentences = [sent.text for sent in nlp(essay).sents]
+    sentence_vectors = [string_to_vec(sentence) for sentence in essay_sentences]
+    essay_vector = np.mean(sentence_vectors, axis=0) if sentence_vectors else np.zeros((300,))
+    return cosine_similarity(topic_vector, essay_vector)
+
+def essay_coherence(essay):
+    """
+    Computes the coherence of the essay by analyzing cosine similarity between consecutive sentences (part d.ii).
+    """
+    essay_sentences = [sent.text for sent in nlp(essay).sents]
+    sentence_vectors = [string_to_vec(sentence) for sentence in essay_sentences]
+    similarities = [cosine_similarity(sentence_vectors[i], sentence_vectors[i+1]) for i in range(len(sentence_vectors)-1)]
+    return np.std(similarities) if similarities else 0, similarities
+
+def analyze_essay_coherence_and_topic(essay, prompt):
+    """
+    Integrates analysis for both the topic relevance (d.i) and coherence (d.ii) of an essay.
+    """
+    topic_relevance = essay_address_topic(essay, prompt)
+    coherence_std, coherence_similarities = essay_coherence(essay)
+    return topic_relevance, coherence_std, coherence_similarities
 
 def find_next_verb(tagged, start_index):
     """
@@ -18,17 +65,12 @@ def find_next_verb(tagged, start_index):
             return word, tag
     return None, None
 
-
 def check_subject_verb_agreement(sentence):
-    # Tokenize and POS tag the input sentence
     tokens = word_tokenize(sentence)
     tagged = pos_tag(tokens)
-
-    # Iterate through the tagged tokens
     for i, (word, tag) in enumerate(tagged):
         if tag in ['NNP', 'NN', 'PRP', 'NNS', 'NNPS']:  # Singular, plural nouns, and personal pronouns
             next_word, next_tag = find_next_verb(tagged, i)
-            
             if next_word:
                 if (tag in ['NNP', 'NN', 'PRP'] and word.lower() in ['he', 'she', 'it']) and next_tag != 'VBZ':
                     return True
@@ -43,85 +85,45 @@ def subject_verb_agreement_errors(essay):
     sentences = sent_tokenize(essay)
     error_sentences = set()
     for sentence in sentences:
-        if (check_subject_verb_agreement(sentence)):
+        if check_subject_verb_agreement(sentence):
             error_sentences.add(sentence)
     return error_sentences
 
 def verb_tense_errors(essay):
-    """
-    Identify sentences in the essay that mix past tense and non-past tense verbs, 
-    which is typically considered a grammatical error.
-    """
-    # Split the essay into sentences
     sentences = sent_tokenize(essay)
     error_sentences = set()
-    
     for sentence in sentences:
-        # Tokenize the sentence into words and tag each word with its part of speech
         tagged = pos_tag(word_tokenize(sentence))
-        past_tense_verbs = 0
-        non_past_tense_verbs = 0
-        
-        # Count past and non-past verbs
-        for word, tag in tagged:
-            if tag in ['VBD', 'VBN']:  # Past tense or past participle
-                past_tense_verbs += 1
-            elif tag in ['VB', 'VBG', 'VBP', 'VBZ']:  # Base, gerund, or present tense
-                non_past_tense_verbs += 1
-                
-        # If both past and non-past verbs are found in a sentence, count as error
+        past_tense_verbs = sum(tag in ['VBD', 'VBN'] for word, tag in tagged)
+        non_past_tense_verbs = sum(tag in ['VB', 'VBG', 'VBP', 'VBZ'] for word, tag in tagged)
         if past_tense_verbs > 0 and non_past_tense_verbs > 0:
             error_sentences.add(sentence)
-            
     return error_sentences
 
 def missing_verb_extra_verb_errors(essay):
-    """
-    Detect sentences with either missing verbs or too many verbs, considering complex 
-    structures such as relative and interrogative clauses.
-    """
     sentences = sent_tokenize(essay)
     error_sentences = set()
-    
     for sentence in sentences:
-        words = word_tokenize(sentence)
-        tagged = pos_tag(words)
-        
-        # Count verbs and expected verb counts based on certain conjunctions and prepositions
+        tagged = pos_tag(word_tokenize(sentence))
         verb_count = sum(1 for word, tag in tagged if tag.startswith('VB'))
         expected_verbs_count = 1 + sum(1 for word, tag in tagged if tag in ['CC', 'IN', 'TO', 'WDT', 'WP', 'WRB'])
-
-        # Check for missing verbs or too many verbs
         if verb_count == 0 or verb_count > expected_verbs_count+1:
             error_sentences.add(sentence)
-    
     return error_sentences
 
 def total_verb_errors(essay):
-    """
-    Combine individual verb error checks to find all sentences with verb-related errors.
-    """
-    num_subject_verb_agreement_errors = len(subject_verb_agreement_errors(essay))
-    num_verb_tense_errors = len(verb_tense_errors(essay))
-    num_missing_verb_extra_verb_errors = len(missing_verb_extra_verb_errors(essay))
-    
-    # Use set union to combine error sentences from different checks
     error_sentences = subject_verb_agreement_errors(essay) | verb_tense_errors(essay) | missing_verb_extra_verb_errors(essay)
-    return error_sentences, num_subject_verb_agreement_errors, num_verb_tense_errors, num_missing_verb_extra_verb_errors
+    return error_sentences, len(subject_verb_agreement_errors(essay)), len(verb_tense_errors(essay)), len(missing_verb_extra_verb_errors(essay))
 
 def verb_errors_to_score(essay):
-    """
-    Calculate a score based on the number of unique verb-related errors in the essay.
-    """
-    # Count the unique verb errors
     num_mistakes = len(total_verb_errors(essay)[0])
     if num_mistakes == 0:
-        return 5  # No mistakes
+        return 5
     elif 1 <= num_mistakes <= 2:
-        return 4  # Few mistakes
+        return 4
     elif 3 <= num_mistakes <= 4:
-        return 3  # Moderate mistakes
+        return 3
     elif 5 <= num_mistakes <= 6:
-        return 2  # Many mistakes
+        return 2
     else:
-        return 1  # Excessive mistakes
+        return 1
