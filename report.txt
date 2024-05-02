@@ -1,66 +1,27 @@
-Report on Automated Essay Scoring Components
+CS 421 Natural Language Processing: Term Project Report
+
+Team Information
+- Hamza Mansoor - smans4@uic.edu
+- Junha Liu - jliu238@uic.edu
 
 Introduction
+Our group was tasked with building an automatic essay scorer for non-native English speakers' essays. The goal was to develop a system capable of classifying essays into low or high scores based on various NLP techniques. This report summarizes our project's approach, the challenges we faced, our results, and potential improvements.
 
-This report outlines the methodology and scoring components of an automated essay scoring system. The system evaluates essays based on three primary aspects: sentence structure, spelling, and grammar correctness, particularly verb-related errors. The algorithms implemented in Python aim to provide quantitative scores that reflect various qualities of essay writing.
+Approach and Implementation
+Our project was structured into two main parts. In the first part, we focused on setting up the basic framework for the essay scorer, which involved defining the features for scoring, and developing initial scoring algorithms based on essay length and spelling errors. We utilized Python 3.10 and several NLP libraries for text processing and feature extraction.
 
-Sentence Counting and Scoring
+In the second part of the project, we enhanced our scorer by incorporating advanced grammatical analysis using dependency parsing. We also integrated semantic analysis by employing word embeddings to gauge how well the essays addressed the given prompt and checked for coherence through simplistic reference resolution methods.
 
-Methodology:
-The system counts the number of sentences in an essay using regular expressions. This method splits the text based on patterns that typically denote the end of sentences, such as periods, question marks, or exclamation points, ensuring that abbreviations do not mistakenly increase the sentence count.
+Challenges and Learning Outcomes
 
-Scoring:
+One of the significant challenges we encountered was the complexity of natural language, especially dealing with grammatical nuances in non-native English texts. While POS tagging helped identify some grammatical inconsistencies, dependency parsing was less effective due to the irregular syntactic structures in poorly written essays. This difficulty highlighted the limitations of current NLP tools in handling texts with high variability and errors.
 
-Average length of high essays: 20.86
-Average length of low essays: 9.8
-Midpoint: 15.33
+Another challenge was ensuring the scorer's reliability across a diverse set of essays. Despite our efforts, the system sometimes misclassified essays, particularly those on the borderline between low and high scores. Through this project, we learned a great deal about the practical applications of NLP and the importance of feature selection process in developing an effective scoring model.
 
-5 points if length >= average_length_high
-4 points if length >= midpoint
-3 points if length >= average_length_low
-2 points if length >= average_length_low / 2
-1 point  if length < average_length_low / 2
+Results and Improvements
+The automatic essay scorer performed reasonably well. To enhance our scorer's accuracy, we could integrate more sophisticated NLP models that better understand context and subtleties in language use, such as transformer-based models like BERT or GPT-3.5, which, though not allowed in this project for undergraduates, represent a potential direction for future iterations.
 
-Spelling Mistakes and Scoring
+Incorporating a more comprehensive set of features, such as syntactic complexity and more advanced semantic analysis techniques, could also improve our system. Additionally, a more extensive training dataset could help the model learn more nuanced distinctions between high and low-quality essays.
 
-Methodology:
-Spelling is checked using the `SpellChecker` library, which compares each word against a dictionary of correctly spelled words. The system identifies words that do not match any entries in the dictionary as misspellings.
-
-Scoring:
-4 points if num_mistakes == 0:
-3 points if 1 <= num_mistakes <= 2
-2 points if 3 <= num_mistakes <= 5
-1 point  if 6 <= num_mistakes <= 8
-0 point  if num_mistakes > 8
-
-Grammar Correctness: Verb Errors
-
-1. Subject-Verb Agreement Error
-
-Methodology:
-
-Subject-verb agreement errors are detected using the SpaCy library, which processes the essay with its English language model. Each token in the text is examined to see if it is a noun serving as a subject (nsubj). The verb that the subject noun depends on (its head) is then checked. If this verb is not in the third person singular present tense (VBZ) when it should be, an error is recorded. This check helps identify inconsistencies between the subject and verb forms, which are crucial for grammatical accuracy.
-
-2. Verb Tense Error
-
-Methodology:
-
-Verb tense errors are identified using the NLTK library, which tokenizes the text into sentences and then into words, tagging each word with its part of speech. The function looks for sentences that mix past tense verbs (VBD, VBN) with non-past tense verbs (VB, VBG, VBP, VBZ). This mixing of tenses within a single sentence can indicate poor temporal consistency and confusion in narrative time, which is often considered a grammatical error.
-
-3. Missing/Extra Verb Error
-
-Methodology:
-
-This error type is checked using NLTK’s capabilities to tokenize and POS-tag each sentence. The analysis involves counting the actual number of verbs in each sentence and estimating the expected number based on the presence of certain conjunctions, prepositions, and other linking words. Sentences are flagged as erroneous if they contain fewer verbs than expected (missing verbs) or more verbs than typical structures require (extra verbs), considering complex clauses and sentence constructions.
-
-Scoring:
-
-5 points if total verb error sentences == 0
-4 points if 1 <= total verb error sentences <= 2
-3 points if 3 <= total verb error sentences <= 4
-2 points if 5 <= total verb error sentences <= 6
-1 point  if total verb error sentences > 6
-
-***Using POS tagging, we counted the number of sentences containing verb error.
-***Total verb error sentences = agreement error sentence | verb tense error | missing/extra verb error
-
+Conclusion
+This project provided us with invaluable hands-on experience in applying NLP techniques to solve real-world problems. We not only learned about the technical aspects of building an NLP application but also about the challenges involved in working with natural language data. Future improvements would involve adopting more advanced NLP techniques and expanding our dataset to refine our scoring algorithms further. This project has set a solid foundation for our future endeavors in the field of NLP.
